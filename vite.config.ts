@@ -10,9 +10,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icons/*.png'],
       manifest: {
-        name: 'Wally Atkins',
-        short_name: 'Wally Atkins',
-        description: 'Wally Atkins Unified Application Suite',
+        name: "Wally's NFL Pick'em",
+        short_name: "NFL Pick'em",
+        description: "Atkins NFL Pick'em League - Weekly Picks Matrix, Wizard & Suite",
         theme_color: '#070d17',
         background_color: '#070d17',
         display: 'standalone',

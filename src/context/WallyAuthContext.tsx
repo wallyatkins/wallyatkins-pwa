@@ -150,6 +150,7 @@ export const WallyAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     const recordTelemetry = async () => {
       try {
+        const APP_VERSION = '2.1.0';
         let clientUuid = localStorage.getItem('wally_client_uuid');
         if (!clientUuid) {
           clientUuid = (typeof crypto !== 'undefined' && crypto.randomUUID)
@@ -161,13 +162,39 @@ export const WallyAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
           (window.navigator as unknown as { standalone?: boolean }).standalone === true;
 
+        const storedVersion = localStorage.getItem('wally_installed_version');
+        const alreadySeenInstall = localStorage.getItem('wally_installed_seen') === 'true';
+
+        let eventType = 'web_access';
+        let installedVia = 'browser';
+
+        if (isStandalone) {
+          if (!alreadySeenInstall) {
+            // First time this device has launched the installed PWA
+            eventType = 'install';
+            installedVia = 'standalone_first_launch';
+            localStorage.setItem('wally_installed_seen', 'true');
+            localStorage.setItem('wally_installed_version', APP_VERSION);
+          } else if (storedVersion && storedVersion !== APP_VERSION) {
+            // PWA version update detected!
+            eventType = 'update';
+            installedVia = 'pwa_update';
+            localStorage.setItem('wally_installed_version', APP_VERSION);
+          } else {
+            // Standard return launch
+            eventType = 'launch';
+            installedVia = 'standalone_launch';
+          }
+        }
+
         await fetch('/football_api.php?action=record_pwa_telemetry', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({
             client_uuid: clientUuid,
-            event_type: isStandalone ? 'standalone_launch' : 'web_access',
+            event_type: eventType,
+            installed_via: installedVia,
             user_id: user?.id || null,
             username: user?.username || null,
             email: user?.email || null,
@@ -177,6 +204,7 @@ export const WallyAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             is_standalone: isStandalone,
             screen_width: window.innerWidth,
             screen_height: window.innerHeight,
+            app_version: APP_VERSION
           })
         });
       } catch {
