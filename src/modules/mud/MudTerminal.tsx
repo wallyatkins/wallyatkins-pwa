@@ -38,12 +38,30 @@ export const MudTerminal: React.FC = () => {
     scrollToBottom();
   }, [logs]);
 
-  // Convert basic ANSI colors to HTML styled spans
+  // Convert basic ANSI and Merc MUD colors to HTML styled spans
   const parseAnsi = (text: string): React.ReactNode => {
-    const lines = text.split('\n');
+    const converted = text
+      .replace(/\{R/g, '\x1b[1;31m')
+      .replace(/\{r/g, '\x1b[31m')
+      .replace(/\{G/g, '\x1b[1;32m')
+      .replace(/\{g/g, '\x1b[32m')
+      .replace(/\{Y/g, '\x1b[1;33m')
+      .replace(/\{y/g, '\x1b[33m')
+      .replace(/\{B/g, '\x1b[1;34m')
+      .replace(/\{b/g, '\x1b[34m')
+      .replace(/\{M/g, '\x1b[1;35m')
+      .replace(/\{m/g, '\x1b[35m')
+      .replace(/\{C/g, '\x1b[1;36m')
+      .replace(/\{c/g, '\x1b[36m')
+      .replace(/\{W/g, '\x1b[1;37m')
+      .replace(/\{w/g, '\x1b[37m')
+      .replace(/\{D/g, '\x1b[1;30m')
+      .replace(/\{x/g, '\x1b[0m');
+
+    const lines = converted.split('\n');
     return lines.map((line, idx) => {
-      // Very clean lightweight ANSI strip / color mapper
       const styledSegments = line
+        .replace(/\x1b\[1;30m/g, '<span style="color:#64748b;font-weight:bold;">')
         .replace(/\x1b\[1;31m/g, '<span style="color:#ef4444;font-weight:bold;">')
         .replace(/\x1b\[31m/g, '<span style="color:#f87171;">')
         .replace(/\x1b\[1;32m/g, '<span style="color:#10b981;font-weight:bold;">')
@@ -69,6 +87,60 @@ export const MudTerminal: React.FC = () => {
       );
     });
   };
+
+  // Auto-connect guest session on initial mount if not authenticated
+  useEffect(() => {
+    let isMounted = true;
+    const initMUD = async () => {
+      let activeToken = token;
+      if (!activeToken) {
+        try {
+          const authRes = await fetch('https://mud.wallyatkins.com/api/auth.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'guest', name: user?.username || 'WallyGuest', class: 3, sex: 1 })
+          });
+          if (authRes.ok) {
+            const authData = await authRes.json();
+            if (authData.success && authData.token) {
+              const resToken: string = authData.token;
+              activeToken = resToken;
+              if (isMounted) {
+                setToken(resToken);
+                localStorage.setItem('wallymud_token', resToken);
+                if (authData.character?.name) setCharacterName(authData.character.name);
+                if (authData.prompt) setPromptStr(authData.prompt);
+                if (authData.last_log_id) setLastLogId(authData.last_log_id);
+              }
+            }
+          }
+        } catch {}
+      }
+
+      // Initial look command
+      if (activeToken && isMounted) {
+        try {
+          const lookRes = await fetch('https://mud.wallyatkins.com/api/command.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: activeToken, command: 'look', last_log_id: 0, cols: 80 })
+          });
+          if (lookRes.ok) {
+            const lookData = await lookRes.json();
+            if (lookData.success && isMounted) {
+              if (lookData.output) {
+                setLogs((prev) => [...prev, { id: Date.now(), text: lookData.output }]);
+              }
+              if (lookData.prompt) setPromptStr(lookData.prompt);
+              if (lookData.last_log_id) setLastLogId(lookData.last_log_id);
+            }
+          }
+        } catch {}
+      }
+    };
+    initMUD();
+    return () => { isMounted = false; };
+  }, [user]);
 
   // Poll for background events / room logs
   useEffect(() => {
