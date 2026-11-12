@@ -39,6 +39,33 @@ export const AccountModule: React.FC = () => {
 
   const [isSaving, setIsSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [testPushStatus, setTestPushStatus] = useState<string | null>(null);
+  const [isSendingTestPush, setIsSendingTestPush] = useState(false);
+
+  const handleSendTestPush = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsSendingTestPush(true);
+    setTestPushStatus(null);
+    try {
+      const clientUuid = localStorage.getItem('pwa_client_uuid') || '';
+      const res = await fetch('/football_api.php?action=test_push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client_uuid: clientUuid })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTestPushStatus('Test notification dispatched! Check your phone lock screen.');
+      } else {
+        setTestPushStatus(`Test push: ${data.error || 'Server error'}`);
+      }
+    } catch {
+      setTestPushStatus('Could not dispatch test push (offline or network error).');
+    } finally {
+      setIsSendingTestPush(false);
+    }
+  };
 
   const handleToggle = (field: keyof typeof formData) => {
     setFormData(prev => ({
@@ -370,12 +397,36 @@ export const AccountModule: React.FC = () => {
                   style={{ width: '18px', height: '18px', accentColor: '#0284c7', cursor: 'pointer' }}
                 />
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600, fontSize: '14px', color: '#f8fafc' }}>
-                    Device Push Notifications
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                    <div style={{ fontWeight: 600, fontSize: '14px', color: '#f8fafc' }}>
+                      Device Push Notifications
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleSendTestPush}
+                      disabled={isSendingTestPush}
+                      style={{
+                        backgroundColor: '#0284c7',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '4px 10px',
+                        color: '#ffffff',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {isSendingTestPush ? 'Sending...' : 'Send Test Push'}
+                    </button>
                   </div>
-                  <div style={{ fontSize: '12px', color: '#94a3b8' }}>
+                  <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>
                     Instant notification on your iPhone or Android lock screen.
                   </div>
+                  {testPushStatus && (
+                    <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '6px' }}>
+                      {testPushStatus}
+                    </div>
+                  )}
                 </div>
               </label>
             </div>
