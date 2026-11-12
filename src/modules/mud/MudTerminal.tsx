@@ -194,7 +194,7 @@ export const MudTerminal: React.FC = () => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: 'calc(100dvh - 65px)',
+        height: 'calc(100dvh - calc(54px + env(safe-area-inset-top, 0px) + 16px))',
         maxWidth: '1000px',
         margin: '0 auto',
         padding: '8px 12px',
@@ -347,7 +347,10 @@ export const MudTerminal: React.FC = () => {
           border: '1px solid #1e3a5f',
           borderBottomLeftRadius: '12px',
           borderBottomRightRadius: '12px',
-          padding: '8px 12px',
+          paddingTop: '8px',
+          paddingLeft: 'max(12px, env(safe-area-inset-left, 0px))',
+          paddingRight: 'max(12px, env(safe-area-inset-right, 0px))',
+          paddingBottom: 'calc(8px + env(safe-area-inset-bottom, 0px))',
           gap: '8px'
         }}
       >
@@ -377,7 +380,10 @@ export const MudTerminal: React.FC = () => {
             backgroundColor: '#070d17',
             border: '1px solid #1e2d42',
             borderRadius: '8px',
-            padding: '8px 12px',
+            paddingTop: '8px',
+          paddingLeft: 'max(12px, env(safe-area-inset-left, 0px))',
+          paddingRight: 'max(12px, env(safe-area-inset-right, 0px))',
+          paddingBottom: 'calc(8px + env(safe-area-inset-bottom, 0px))',
             color: '#f8fafc',
             fontFamily: 'JetBrains Mono, monospace',
             fontSize: '13px',

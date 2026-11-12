@@ -57,7 +57,12 @@ export const ModuleSwitcherDrawer: React.FC<ModuleSwitcherDrawerProps> = ({ isOp
           borderTopRightRadius: '24px',
           border: '1px solid #1e3a5f',
           borderBottom: 'none',
-          padding: '20px 20px 32px 20px',
+          paddingTop: '20px',
+          paddingLeft: 'max(20px, env(safe-area-inset-left, 0px))',
+          paddingRight: 'max(20px, env(safe-area-inset-right, 0px))',
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 28px)',
+          maxHeight: '90dvh',
+          overflowY: 'auto',
           boxShadow: '0 -10px 40px rgba(0,0,0,0.6)',
           animation: 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
         }}

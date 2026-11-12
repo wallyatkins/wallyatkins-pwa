@@ -25,10 +25,10 @@ export const PwaHeader: React.FC = () => {
           zIndex: 50,
           backgroundColor: '#070d17',
           borderBottom: '1px solid #1e2d42',
-          paddingTop: 'max(10px, env(safe-area-inset-top))',
-          paddingBottom: '10px',
-          paddingLeft: '16px',
-          paddingRight: '16px'
+          paddingTop: 'calc(env(safe-area-inset-top, 0px) + 10px)',
+          paddingBottom: '12px',
+          paddingLeft: 'max(16px, env(safe-area-inset-left, 0px))',
+          paddingRight: 'max(16px, env(safe-area-inset-right, 0px))',
         }}
       >
         <div
