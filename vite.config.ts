@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  base: '/pwa/',
+  base: '/',
   plugins: [
     react(),
     VitePWA({
@@ -17,23 +17,24 @@ export default defineConfig({
         background_color: '#070d17',
         display: 'standalone',
         orientation: 'portrait-primary',
-        start_url: '/pwa/',
-        scope: '/pwa/',
+        start_url: '/',
+        scope: '/',
+        id: '/',
         icons: [
           {
-            src: '/pwa/icons/icon-192.png',
+            src: '/icons/icon-192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/pwa/icons/icon-512.png',
+            src: '/icons/icon-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/pwa/icons/icon-512-maskable.png',
+            src: '/icons/icon-512-maskable.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
@@ -42,72 +43,14 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https?:\/\/.*\/football_api\.php.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              networkTimeoutSeconds: 5,
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 24 * 60 * 60 // 1 day
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /^https?:\/\/mud\.wallyatkins\.com\/api\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'mud-api-cache',
-              networkTimeoutSeconds: 4,
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /^https?:\/\/tasks\.wallyatkins\.com\/api.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'tasks-api-cache',
-              networkTimeoutSeconds: 4,
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /^https?:\/\/.*\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'image-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
-              }
-            }
-          }
-        ]
+        navigateFallbackDenylist: [/^\/api(?:\/|$)/, /^\/auth(?:\/|$)/],
+        // Private API responses and chat content must never enter offline caches.
+        runtimeCaching: []
       }
     })
   ],
   server: {
     port: 3000,
-    proxy: {
-      '/football_api.php': {
-        target: 'https://wallyatkins.com',
-        changeOrigin: true,
-        secure: true
-      },
-      '/api': {
-        target: 'https://mud.wallyatkins.com',
-        changeOrigin: true,
-        secure: true
-      }
-    }
+    proxy: { '/api': 'http://127.0.0.1:3001', '/auth': 'http://127.0.0.1:3001' }
   }
 });

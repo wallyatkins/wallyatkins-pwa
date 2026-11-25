@@ -1,0 +1,1 @@
+{"name":"wally-pwa-backend","private":true,"type":"module","version":"0.1.0","engines":{"node":">=24"},"scripts":{"start":"node index.mjs","test":"node --test test/*.test.mjs"},"dependencies":{"express":"^5.1.0","openid-client":"^6.9.1","cookie-parser":"^1.4.7","helmet":"^8.1.0"}}

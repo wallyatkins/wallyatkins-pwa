@@ -1,0 +1,10 @@
+# Initial installation: deliberately no model until the owner approves a budget.
+model:
+  provider: openrouter
+  default: ""
+agent:
+  max_turns: 12
+platform_toolsets:
+  api_server: []
+tool_loop_guardrails:
+  non_interactive_hard_stop_enabled: true

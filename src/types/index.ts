@@ -9,14 +9,14 @@ export interface User {
   timezone?: string;
 }
 
-export type ModuleId = 'football' | 'mud' | 'tasks' | 'account';
+export type ModuleId = 'football' | 'mud' | 'tasks' | 'account' | 'assistant';
 
 export interface PwaModule {
   id: ModuleId;
   name: string;
   shortName: string;
   badge?: string;
-  iconName: 'Trophy' | 'Terminal' | 'CheckSquare' | 'User';
+  iconName: 'Trophy' | 'Terminal' | 'CheckSquare' | 'User' | 'MessageSquare';
   requiredRole?: string;
   description: string;
 }

@@ -1,6 +1,7 @@
 import { PwaModule } from '../types';
 
 export const PWA_MODULES: PwaModule[] = [
+  { id: 'assistant', name: 'Assistant', shortName: 'Assistant', iconName: 'MessageSquare', description: 'Your private personal assistant.' },
   {
     id: 'football',
     name: "NFL Pick'em",

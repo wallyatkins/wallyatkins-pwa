@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trophy, Terminal, CheckSquare, User, Shield } from 'lucide-react';
+import { Trophy, Terminal, CheckSquare, User, Shield, MessageSquare } from 'lucide-react';
 import { PwaModule } from '../../types';
 
 interface ModuleIconProps {
@@ -10,6 +10,8 @@ interface ModuleIconProps {
 
 export const ModuleIcon: React.FC<ModuleIconProps> = ({ name, className = '', size = 18 }) => {
   switch (name) {
+    case 'MessageSquare':
+      return <MessageSquare className={className} size={size} />;
     case 'Trophy':
       return <Trophy className={className} size={size} />;
     case 'Terminal':
