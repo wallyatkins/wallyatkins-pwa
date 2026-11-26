@@ -11,6 +11,8 @@ export function openStore(file) {
     CREATE TABLE IF NOT EXISTS turns (id TEXT PRIMARY KEY, conversation TEXT NOT NULL REFERENCES conversations(id), owner TEXT NOT NULL, request_id TEXT NOT NULL, input TEXT NOT NULL, run_id TEXT, status TEXT NOT NULL, output TEXT NOT NULL DEFAULT '', created INTEGER NOT NULL, UNIQUE(owner,request_id));
     CREATE INDEX IF NOT EXISTS turns_conversation ON turns(conversation,created);
     CREATE TABLE IF NOT EXISTS preferences (owner TEXT PRIMARY KEY, value TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS push_subscriptions (endpoint TEXT PRIMARY KEY, owner TEXT NOT NULL, p256dh TEXT NOT NULL, auth TEXT NOT NULL, created INTEGER NOT NULL);
+    CREATE INDEX IF NOT EXISTS push_subscriptions_owner ON push_subscriptions(owner);
   `);
   return db;
 }

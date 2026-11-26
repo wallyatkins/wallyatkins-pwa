@@ -7,8 +7,14 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'favicon.svg', 'apple-touch-icon.png', 'icons/*.png'],
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
+      },
       manifest: {
         name: "Wally Atkins",
         short_name: "Wally Atkins",
@@ -40,12 +46,6 @@ export default defineConfig({
             purpose: 'maskable'
           }
         ]
-      },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        navigateFallbackDenylist: [/^\/api(?:\/|$)/, /^\/auth(?:\/|$)/],
-        // Private API responses and chat content must never enter offline caches.
-        runtimeCaching: []
       }
     })
   ],

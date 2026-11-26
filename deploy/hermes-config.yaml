@@ -1,10 +1,61 @@
-# Initial installation: deliberately no model until the owner approves a budget.
+# Cost-efficient default using OpenRouter's dynamic auto-router.
 model:
   provider: openrouter
-  default: ""
+  default: openrouter/auto
+timezone: America/New_York
 agent:
   max_turns: 12
 platform_toolsets:
-  api_server: []
+  api_server:
+    - memory
+    - session_search
+    - cronjob
+    - todo
+    - web
+    - skills
+skills:
+  disabled:
+    - apple-notes
+    - apple-reminders
+    - findmy
+    - imessage
+    - claude-code
+    - codex
+    - computer-use
+    - hermes-agent
+    - architecture-diagram
+    - ascii-video
+    - baoyu-infographic
+    - claude-design
+    - manim-video
+    - p5js
+    - popular-web-designs
+    - songwriting-and-ai-music
+    - sdlc-review
+    - email-inbox-triage
+    - himalaya
+    - obsidian
+    - google-workspace
+    - microsoft-office
+    - teams-meeting-pipeline
+    - arxiv
+    - xurl
+    - codebase-inspection
+    - dogfood
+    - github
+    - requesting-code-review
+    - simplify-code
+    - spike
+    - systematic-debugging
+    - test-driven-development
+    - blocked-page-recovery
+auxiliary:
+  openrouter_model: google/gemini-2.5-flash-lite
+  title_generation:
+    prefer_fast_model: true
+compression:
+  enabled: true
+  threshold: 0.5
+  target_ratio: 0.2
 tool_loop_guardrails:
   non_interactive_hard_stop_enabled: true
